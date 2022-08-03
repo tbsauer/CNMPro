@@ -1,0 +1,81 @@
+	ALTER PROC [dbo].[Jobs_SelectAll]
+
+				 @PageIndex int
+				,@PageSize int
+
+	AS
+
+	/*
+
+
+				DECLARE @PageIndex int = 0
+				,@PageSize int = 50
+
+		Execute dbo.Jobs_SelectAll 
+												@PageIndex
+												,@PageSize
+
+	*/
+
+	BEGIN
+
+		Declare @Offset int = @PageIndex * @PageSize
+		
+		SELECT j.[Id]
+			  ,j.[JobTypeId] AS [JobType] 
+			  ,t.[Type]
+			  ,j.[Title]
+			  ,j.[Description]
+			  ,j.[Requirements]
+			  ,j.[LocationId] AS [Location]
+			  ,l.[LocationTypeId] AS [LocationType]
+			  ,lt.[Name]
+			  ,l.[LineOne]
+			  ,l.[LineTwo]
+			  ,l.[City]
+			  ,l.[Zip]
+			  ,l.[StateId] As [StateId]
+			  ,s.[Name]
+			  ,s.[Code]
+			  ,l.[Latitude]
+			  ,l.[Longitude]
+			  ,j.[OrganizationId] AS [Organization]
+			  ,o.[OrganizationTypeId] AS [OrganizationType] 
+			  ,ot.[Name]
+			  ,o.[Name]
+			  ,o.[Headline]
+			  ,o.[Description]
+			  ,o.[Logo]
+			  ,o.[Phone]
+			  ,o.[SiteUrl]
+			  ,up.[Id]
+			  ,j.[CreatedBy]
+			  ,up.FirstName
+			  ,up.LastName
+			  ,up.Mi
+			  ,up.AvatarUrl
+			  ,j.[DateCreated]
+			  ,j.[DateModified]
+			  ,TotalCount = COUNT(1) OVER()
+
+
+			  
+
+		FROM [dbo].[Jobs] AS j INNER JOIN dbo.Locations as l
+		ON l.LocationTypeId = j.LocationId INNER JOIN dbo.Organizations as o
+		ON j.OrganizationId = o.OrganizationTypeId INNER JOIN dbo.States as s
+		ON l.StateId = s.Id INNER JOIN dbo.JobTypes as t 
+		ON j.JobTypeId = t.Id Inner join  dbo.UserProfiles as up 
+		ON up.UserId = j.CreatedBy inner join dbo.LocationTypes as lt  
+		ON lt.Id = l.LocationTypeId inner join dbo.OrganizationTypes as ot 
+		ON ot.Id = j.OrganizationId
+
+
+
+		ORDER BY j.Id
+
+		OFFSET @Offset ROWS
+		FETCH NEXT @PageSize ROWS ONLY
+
+
+	END
