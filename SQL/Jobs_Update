@@ -1,0 +1,72 @@
+ALTER PROC [dbo].[Jobs_Update]
+					@JobTypeId int
+					,@LocationId int
+					,@OrganizationId int
+					,@Title nvarchar(200)
+					,@Description nvarchar(4000)
+					,@Requirements nvarchar(3000)
+					,@IsActive bit
+					,@ContactName nvarchar(100)
+					,@ContactPhone nvarchar(20)
+					,@ContactEmail nvarchar(200)
+					,@UserId int
+					,@Id int 
+
+/*---------------Test Code--------------
+DECLARE @JobTypeId int = 111
+		,@LocationId int = 222
+		,@OrganizationId int = 333
+		,@Title nvarchar(200) = 'updated title'
+		,@Description nvarchar(4000) = 'updated description'
+		,@Requirements nvarchar(3000) = 'updated requirements'
+		,@IsActive bit = 0
+		,@ContactName nvarchar(100) = 'John Doe'
+		,@ContactPhone nvarchar(20) = '(555) 123-4567'
+		,@ContactEmail nvarchar(200) = 'test@email.com'
+		,@UserId int = 555
+		,@Id int = 1
+			
+SELECT *
+FROM [dbo].[Jobs]
+WHERE Id = @Id
+
+	EXEC [dbo].[Jobs_Update]
+						@JobTypeId
+						,@LocationId
+						,@OrganizationId
+						,@Title 
+						,@Description 
+						,@Requirements 
+						,@IsActive 
+						,@ContactName
+						,@ContactPhone
+						,@ContactEmail
+						,@UserId
+						,@Id 
+
+SELECT *
+FROM [dbo].[Jobs]
+WHERE Id = @Id
+
+*/
+
+AS
+
+BEGIN
+
+UPDATE [dbo].[Jobs]
+   SET [JobTypeId] = @JobTypeId
+      ,[LocationId] = @LocationId
+      ,[OrganizationId] = @OrganizationId
+      ,[Title] = @Title
+      ,[Description] = @Description
+      ,[Requirements] = @Requirements
+      ,[IsActive] = @IsActive
+      ,[ContactName] = @ContactName
+      ,[ContactPhone] = @ContactPhone
+      ,[ContactEmail] = @ContactEmail
+      ,[ModifiedBy] = @UserId
+      ,[DateModified] = GETUTCDATE()
+ WHERE Id = @Id
+					
+END
