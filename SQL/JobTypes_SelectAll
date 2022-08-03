@@ -1,0 +1,20 @@
+	ALTER PROC [dbo].[JobTypes_SelectAll] 
+
+	AS
+
+	/*------Test Code------
+		
+	Execute [dbo].[JobTypes_SelectAll]
+
+
+	*/---------------------
+
+	BEGIN
+
+
+	SELECT [Id]
+		  ,[Type]
+
+	  FROM [dbo].[JobTypes]
+
+	END
