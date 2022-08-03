@@ -1,0 +1,242 @@
+import React, { useEffect, useState } from 'react';
+import jobOrganizationSchema from '../../schema/jobs/jobOrganizationSchema';
+import { withFormik } from 'formik';
+import { Form, Card } from 'react-bootstrap';
+import * as wizardPropTypes from './jobsPropTypes';
+import lookUpService from '../../services/lookUpService';
+import debug from 'sabio-debug';
+
+const _logger = debug.extend('jobOrganization');
+
+const JobOrganization = (props) => {
+    const {
+        values,
+        errors,
+        handleChange,
+        handleBlur,
+        isSubmitting,
+        handleSubmit,
+        onBack,
+        backLabel,
+        nextLabel,
+        onNext,
+        cantBack,
+    } = props;
+    _logger(props, 'Job Organization props');
+
+    const [organizationTypes, setOrganizationTypes]  = useState([]);
+    _logger(organizationTypes, 'new organizationType');
+
+    useEffect(() => {
+        onChange();
+        lookUpService.LookUp(['OrganizationTypes']).then(onSuccessOrganizationTypes).catch(onErrorOrganizationTypes)
+    }, []);
+
+    const onSuccessOrganizationTypes = (response) =>{
+        setOrganizationTypes((prevState) => {
+            let ot = {...prevState}; 
+            ot = response.item.organizationTypes;
+            _logger(response, "TYPES LOG ---------------")
+            return ot;
+        })
+     };
+
+
+    const onErrorOrganizationTypes = (err) => {
+        _logger("Get Organization Types error", err)
+    };
+
+
+    const mapOrganizationTypesOptions = (organizationType)=>{
+        return(<option key={organizationType.id} value={organizationType.id} type="number">{organizationType.name}</option>)
+    };
+
+
+    const onChange = () => {
+        props.onChange(values);
+    };
+
+    const onNextClicked = () => {
+        onNext(values);
+    };
+/*
+        phone: '',
+        siteUrl: '',
+*/
+    return (
+        <React.Fragment>
+            <Form onSubmit={handleSubmit} className="p-1">
+                <Card className="p-4 mx-auto" style={{ width: 950 }}>
+                    <Card.Header>
+                        <h3 className="text-center">Job Organization</h3>
+                    </Card.Header>
+                    <div className="form-group mt-2">
+                        <div className="row">
+                        <div className="col-sm-6">
+                                <label htmlFor="organizationTypeId">Organization Type:</label>
+                                <div className="form-group my-2">
+                                    <Form.Select
+                                        name="organizationTypeId"
+                                        value={values.organizationTypeId}
+                                        onChange={handleChange}
+                                        onBlur={handleBlur}
+                                        variant="outlined"
+                                        className="form-control">
+                                        <option>Select One</option>
+                                        {organizationTypes.map(mapOrganizationTypesOptions)}
+                                    </Form.Select>
+                                </div>
+                            </div>
+                            <div className="col-sm-12">
+                                <label htmlFor="name">Name:</label>
+                                <div className="form-group my-2">
+                                    <Form.Control
+                                        name="name"
+                                        value={values.name}
+                                        onChange={handleChange}
+                                        onBlur={handleBlur}
+                                        variant="outlined"
+                                        placeholder="Enter Company Name"
+                                        className="form-control"></Form.Control>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="row">
+                            <div className="col-sm-12">
+                                <label htmlFor="headline">Headline:</label>
+                                <div className="form-group my-2">
+                                    <Form.Control
+                                        name="headline"
+                                        value={values.headline}
+                                        onChange={handleChange}
+                                        onBlur={handleBlur}
+                                        variant="outlined"
+                                        placeholder="Enter Company Headline"
+                                        className="form-control"></Form.Control>
+                                </div>
+                            </div>
+                            <div className="form-group mt-2">
+                                <label htmlFor="orgDescription">Description:</label>
+                                <div className="form-group my-2">
+                                <Form.Control
+                                as="textarea"
+                                rows={8}
+                                name="orgDescription"
+                                value={values.orgDescription}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                variant="outlined"
+                                className="form-control"
+                            />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="row">
+                            <div className="col-sm-12">
+                                <label htmlFor="logo">Logo:</label>
+                                <div className="form-group my-2">
+                                    <Form.Control
+                                        name="logo"
+                                        value={values.logo}
+                                        onChange={handleChange}
+                                        onBlur={handleBlur}
+                                        variant="outlined"
+                                        placeholder="Enter Your Logo's URL"
+                                        className="form-control"></Form.Control>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="row">
+                            <div className="col-sm-6">
+                                <label htmlFor="phone">Phone:</label>
+                                <div className="form-group my-2">
+                                    <Form.Control
+                                        name="phone"
+                                        value={values.phone}
+                                        onChange={handleChange}
+                                        onBlur={handleBlur}
+                                        variant="outlined"
+                                        placeholder="(xxx)-xxx-xxx - Enter Your Organization's Phone Number"
+                                        className="form-control"></Form.Control>
+                                </div>
+                            </div>
+                            <div className="col-sm-6">
+                                <label htmlFor="siteUrl">Website:</label>
+                                <div className="form-group my-2">
+                                    <Form.Control
+                                        name="siteUrl"
+                                        value={values.siteUrl}
+                                        onChange={handleChange}
+                                        onBlur={handleBlur}
+                                        variant="outlined"
+                                        placeholder="Enter Your Website URL"
+                                        className="form-control"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="button-group pt-3 row">
+                            <div className="col-sm-1">
+                                <button
+                                    type="button"
+                                    className="btn btn-secondary"
+                                    onClick={onBack}
+                                    disabled={isSubmitting || cantBack}>
+                                    {backLabel}
+                                </button>
+                            </div>
+                            <div className="col-sm-1">
+                                <button
+                                    type="submit"
+                                    className="btn btn-primary"
+                                    disabled={
+                                        !values.organizationTypeId ||
+                                        Boolean(errors.organizationTypeId) ||
+                                        !values.name ||
+                                        Boolean(errors.name) ||
+                                        !values.headline ||
+                                        Boolean(errors.headline) ||
+                                        !values.orgDescription||
+                                        Boolean(errors.orgDescription) ||
+                                        !values.logo ||
+                                        Boolean(errors.logo) ||
+                                        !values.phone ||
+                                        Boolean(errors.phone) ||
+                                        !values.siteUrl ||
+                                        Boolean(errors.siteUrl)
+                                    }
+                                    onClick={onNextClicked}>
+                                    {nextLabel}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </Card>
+            </Form>
+        </React.Fragment>
+    );
+};
+
+JobOrganization.propTypes = wizardPropTypes.jobPropTypes;
+
+export default withFormik({
+    mapPropsToValues: (props) => ({
+        organizationTypeId: props.formData.organizationTypeId,
+        name: props.formData.name,
+        headline: props.formData.headline,
+        orgDescription: props.formData.orgDescription,
+        logo: props.formData.logo,
+        phone: props.formData.phone,
+        siteUrl: props.formData.siteUrl
+    }),
+
+    validationSchema: jobOrganizationSchema,
+
+    handleSubmit: (values, { props }) => {
+        props.onNext(values);
+    },
+})(JobOrganization);
