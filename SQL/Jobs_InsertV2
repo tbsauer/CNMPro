@@ -1,0 +1,184 @@
+ALTER PROC [dbo].[Jobs_InsertV2]
+
+					 
+					 @JobTypeId int
+					,@Title nvarchar(200)
+					,@Description nvarchar(4000)
+					,@Requirements nvarchar(3000)
+					--
+					,@LocationTypeId int
+					,@LineOne nvarchar(255)
+					,@LineTwo nvarchar(255)
+					,@City nvarchar(225)
+					,@Zip nvarchar(50)
+					,@StateId int
+					,@Latitude float 
+					,@Longitude float
+					
+					--
+					,@OrganizationTypeId int 
+				    ,@Name nvarchar(200) 
+				    ,@Headline nvarchar(200) 
+				    ,@OrgDescription nvarchar(MAX)
+				    ,@Logo nvarchar(255) 
+				    ,@Phone nvarchar(50) 
+				    ,@SiteUrl nvarchar(255) 
+					--
+					,@IsActive bit 
+					,@ContactName nvarchar(100)
+					,@ContactPhone nvarchar(20)
+					,@ContactEmail nvarchar(200)
+					,@CreatedBy int
+					,@ModifiedBy int
+					,@Id int OUTPUT
+		            ,@LocationId int OUTPUT
+					,@OrganizationId int OUTPUT
+					
+
+/*---------------Test Code--------------
+
+
+					 
+		  DECLARE	 @JobTypeId int = 2
+					,@Title nvarchar(200) = 'test title'
+					,@Description nvarchar(4000) = 'test description'
+					,@Requirements nvarchar(3000) = 'test requirements'
+					--
+					,@LocationTypeId int = 1
+					,@LineOne nvarchar(255) = 'Test LineOne'
+					,@LineTwo nvarchar(255) = 'Test LineOne'
+					,@City nvarchar(225) = 'Testtown'
+					,@Zip nvarchar(50) = '11111'
+					,@StateId int = 5
+					,@Latitude float = 12.12
+					,@Longitude float = 13.13
+					
+					--
+					,@OrganizationTypeId int = 1
+				    ,@Name nvarchar(200) = 'TestOrg'
+				    ,@Headline nvarchar(200) = 'TestHeadline'
+				    ,@OrgDescription nvarchar(MAX) = 'TestOrgDesc'
+				    ,@Logo nvarchar(255) = 'www.test.com/test.jpg'
+				    ,@Phone nvarchar(50) = '111-111-1234'
+				    ,@SiteUrl nvarchar(255) = 'www.test.com'
+					--
+					,@IsActive bit = 1
+					,@ContactName nvarchar(100) = 'TestName'
+					,@ContactPhone nvarchar(20) = '111-111-1235'
+					,@ContactEmail nvarchar(200) = 'test@test.com'
+					,@CreatedBy int = 4
+					,@Id int = 0
+		            ,@LocationId int = 0
+					,@OrganizationId int = 0
+
+         EXECUTE [dbo].[Jobs_InsertV2]
+					 @JobTypeId
+					,@Title 
+					,@Description 
+					,@Requirements
+					--
+					,@LocationTypeId 
+					,@LineOne 
+					,@LineTwo 
+					,@City 
+					,@Zip 
+					,@StateId
+					,@Latitude 
+					,@Longitude 
+					
+					--
+					,@OrganizationTypeId 
+				    ,@Name
+				    ,@Headline 
+				    ,@OrgDescription 
+				    ,@Logo 
+				    ,@Phone 
+				    ,@SiteUrl 
+					--
+					,@IsActive 
+					,@ContactName 
+					,@ContactPhone 
+					,@ContactEmail
+					,@CreatedBy 
+					,@Id OUTPUT
+		            ,@LocationId OUTPUT
+					,@OrganizationId OUTPUT
+
+	Select *
+	From [dbo].[Jobs]
+	Where Id = @Id
+
+*/
+
+AS
+
+BEGIN
+
+
+
+
+
+
+		   ----- Organizations _Insert --------
+
+	        EXECUTE	[dbo].[Organizations_Insert]
+
+					 @LocationTypeId
+					,@LineOne 
+					,@LineTwo
+					,@City 
+					,@Zip 
+					,@StateId 
+					,@Latitude 
+					,@Longitude 					
+					,@OrganizationTypeId
+					,@Name
+					,@Headline
+					,@OrgDescription
+					,@Logo
+					,@Phone
+					,@SiteUrl
+					,@CreatedBy 
+					,@LocationId OUTPUT
+			        ,@OrganizationId OUTPUT
+
+		 ----- Jobs ------
+
+		INSERT INTO [dbo].[Jobs]
+				   ([JobTypeId]
+				   ,[OrganizationId]
+				   ,[LocationId]
+				   ,[Title]
+				   ,[Description]
+				   ,[Requirements]
+				   ,[IsActive]
+				   ,[ContactName]
+				   ,[ContactPhone]
+				   ,[ContactEmail]
+				   ,[CreatedBy]
+				   ,[ModifiedBy]
+				   ,[DateCreated]
+				   ,[DateModified])
+			 VALUES
+				   (@JobTypeId
+				   	,@OrganizationId
+					,@LocationId
+					,@Title 
+					,@Description 
+					,@Requirements
+					,@IsActive 
+					,@ContactName
+					,@ContactPhone
+					,@ContactEmail
+					,@CreatedBy
+					,@CreatedBy
+					,GETUTCDATE()
+					,GETUTCDATE())
+
+				SET @Id = SCOPE_IDENTITY()
+
+
+
+
+
+END
